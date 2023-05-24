@@ -1,6 +1,34 @@
-import React from "react";
+import React, {useCallback, useContext, useRef} from "react";
+import {UserDispatch} from "./App";
 
-function CreatePost({ title, content, onChange, onCreate }) {
+function CreatePost({ title, content }) {
+
+  const dispatch = useContext(UserDispatch);
+
+  const nextId = useRef(4);
+
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    dispatch({
+      type: 'CHANGE_INPUT',
+      name,
+      value
+    }); // TODO: key, value 입력없이 가능한지??
+  }, []);
+
+  const onCreate = useCallback(() => {
+    dispatch({
+      type: 'CREATE_POST',
+      post: {
+        id: nextId.current++,
+        title,
+        content,
+        hit: 0,
+        isEditable: true,
+        isSelected: false
+      }
+    });
+  }, [title, content]);
   return (
     <div>
       <input

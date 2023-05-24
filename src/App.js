@@ -5,6 +5,7 @@ import './App.css';
 import React, {useCallback, useReducer, useRef} from 'react';
 import PostList from "./PostList";
 import CreatePost from "./CreatePost";
+import SearchBar from "./SearchBar";
 
 const initialState = {
   inputs: {
@@ -60,6 +61,8 @@ function reducer(state, action) {
   }
 }
 
+export const UserDispatch = React.createContext(null);
+
 function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -68,54 +71,8 @@ function App() {
 
   const { title, content } = state.inputs;
 
-  const nextId = useRef(4);
-
-  const onChange = useCallback(e => {
-    const { name, value } = e.target;
-    dispatch({
-      type: 'CHANGE_INPUT',
-      name,
-      value
-    }); // TODO: key, value 입력없이 가능한지??
-  }, []);
-
-  const onCreate = useCallback(() => {
-    dispatch({
-      type: 'CREATE_POST',
-      post: {
-        id: nextId.current++,
-        title,
-        content,
-        hit: 0,
-        isEditable: true,
-        isSelected: false
-      }
-    });
-  }, [title, content]);
-
-  const onClick = useCallback(postId => {
-    dispatch({
-      type: 'CLICK_POST',
-      postId
-    });
-  }, []);
-
-  const onRemove = useCallback(postId => {
-    dispatch({
-      type: 'REMOVE_POST',
-      postId
-    });
-  }, []);
-
-  const increaseHit = useCallback(postId => {
-    dispatch({
-      type: 'INCREASE_HIT',
-      postId
-    })
-  });
-
   return (
-    <>
+    <UserDispatch.Provider value={dispatch}>
       {/* return 안에는 동등한 레벨의 태그를 병렬로 사용할 수 없어서 하나의 태그로 묶어주어야 함. 이때 사용할 수 있는 임시 태그. */}
 
       <div className="App">
@@ -128,7 +85,7 @@ function App() {
 
         <img src={ logo } style={ { width : '100px' } } />
 
-        {/*<SearchBar />*/}
+        <SearchBar />
 
         <h2>목록({postList.length})</h2>
         {/*<button onClick={ changeOrder } >sort</button>*/}
@@ -136,9 +93,9 @@ function App() {
 
         <PostList
           postList={postList}
-          onClick={onClick}
-          onRemove={onRemove}
-          increaseHit={increaseHit}
+          // onClick={onClick}
+          // onRemove={onRemove}
+          // increaseHit={increaseHit}
         />
 
         <h2>글쓰기</h2>
@@ -146,14 +103,14 @@ function App() {
         <CreatePost
           title={title}
           content={content}
-          onChange={onChange}
-          onCreate={onCreate}
+          // onChange={onChange}
+          // onCreate={onCreate}
         />
       </div>
       <div>
 
       </div>
-    </>
+    </UserDispatch.Provider>
   );
 }
 export default App;

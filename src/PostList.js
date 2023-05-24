@@ -1,6 +1,9 @@
-import React, {useEffect} from "react";
+import React, {useCallback, useContext, useEffect} from "react";
+import {UserDispatch} from "./App";
 
-function PostList({ postList, onClick, onRemove, changeTitle, increaseHit }) {
+function PostList({ postList }) {
+
+  const dispatch = useContext(UserDispatch);
 
   // TODO: Hook
   useEffect(() => { // func
@@ -13,6 +16,13 @@ function PostList({ postList, onClick, onRemove, changeTitle, increaseHit }) {
     }, [postList] // 이 변수가 수정, 삭제 되는 경우에도 함수를 호출. 변수 지정안하면 모든 경우 호출?
   );
 
+  const onClick = useCallback(postId => {
+    dispatch({
+      type: 'CLICK_POST',
+      postId
+    });
+  }, []);
+
   return (
 
     <>
@@ -23,8 +33,8 @@ function PostList({ postList, onClick, onRemove, changeTitle, increaseHit }) {
           </h3>
 
           {/* 속성에 key 값이 있어야 배열이 효울적으로 랜더링 됨*/}
-          <Modal key={ "postDetail-" + post.id } style={{display: post.isSelected ? 'block' : 'none'}}
-                 post={post} onRemove={onRemove} changeTitle={changeTitle} increaseHit={increaseHit}/>
+          <Post key={ "postDetail-" + post.id } style={{display: post.isSelected ? 'block' : 'none'}}
+                 post={post} />
 
           <hr/>
         </div>
@@ -39,10 +49,26 @@ function PostList({ postList, onClick, onRemove, changeTitle, increaseHit }) {
  * @returns {JSX.Element}
  * @constructor
  */
-const Modal = function({post, onRemove, changeTitle, increaseHit}) {
+const Post = React.memo(function({post}) {
+
+  const dispatch = useContext(UserDispatch);
 
   // TODO: 비구조화 객체 할당
   var { id, title, content, isSelected, isEditable, hit } = post;
+
+  const onRemove = useCallback(postId => {
+    dispatch({
+      type: 'REMOVE_POST',
+      postId
+    });
+  }, []);
+
+  const increaseHit = useCallback(postId => {
+    dispatch({
+      type: 'INCREASE_HIT',
+      postId
+    })
+  });
 
   return (
     <>
@@ -53,13 +79,12 @@ const Modal = function({post, onRemove, changeTitle, increaseHit}) {
 
           {/*수정 권한에 따라 수정/삭제 버튼 노출*/}
           { isEditable && <span onClick={ () => onRemove(id) }>❌</span> }
-          <span onClick={ (e) => { changeTitle(id) } } > ✨ </span>
           <span onClick={ (e) => { increaseHit(id) } }>👍</span> { hit }
 
         </div>
       }
     </>
   );
-}
+});
 
-export default PostList;
+export default React.memo(PostList);
