@@ -2,6 +2,31 @@
   text-align: center;
 }
 
+body {
+  font-family: 'nanumsquare';
+}
+
+.black-nav {
+  background: black;
+  width: 100%;
+  display: flex;
+  color: white;
+  padding: 20px;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.modal {
+  /*display: none;*/
+  margin-top: 20px;
+  padding: 20px;
+  background: lightblue;
+}
+
+/*.modal.active {*/
+/*  display: block;*/
+/*}*/
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

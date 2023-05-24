@@ -1,25 +1,166 @@
+/* eslint-disable */
+
 import logo from './logo.svg';
 import './App.css';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import Hello from "./Hello";
+import SearchBar from "./SearchBar";
+import CreatePost from "./CreatePost";
+import Post from "./Post";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function countActivePosts(postList) {
+  console.log('게시글 수 카운트');
+  return postList.length;
 }
 
+function reducer(state, action) {
+  switch(action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+function App() {
+
+  //////////////////
+  // 동적 변수 선언 //
+  //////////////////
+
+  // TODO: 변수 랜더링 Hook
+  const [inputs, setInputs] = useState({
+    title: '',
+    content: ''
+  });
+
+  const { title, content } = inputs;
+
+  // TODO: 엘리먼트 참조 Hook
+  const nextId = useRef(4);
+
+  // TODO: 비구조화 배열 할당
+  let [postList, changePostList] = useState([
+    { id: 1, title: '판교 맛집 추천', content: '판교 맛집 추천 포스팅입니다.', hit: 10, isEditable: false, isSeleted: false }
+    , { id: 2, title: '판교 술집 추천', content: '판교 술집 추천 포스팅입니다.', hit: 5, isEditable: true, isSeleted: false }
+    , { id: 3, title: '판교 야경 추천', content: '판교 야경 추천 포스팅입니다.', hit: 0, isEditable: false, isSeleted: false }
+  ]);
+
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value
+    })
+  }, []);
+
+  const onCreate = useCallback(() => {
+
+    // changePostList(postList.concat({ // TODO: concat - 기존 배열 수정없이 원소 추가하는 문법
+    changePostList([...postList, {
+      id: nextId.current,
+      title: title,
+      content: content,
+      hit: 0,
+      isEditable: true,
+      isSeleted: false
+    }]);
+
+    setInputs({
+      title: '',
+      content: ''
+    });
+    nextId.current += 1;
+  },[]);
+
+  const onRemove = useCallback(postId => {
+    changePostList(postList.filter(post => post.id !== postId));
+  }, []);
+
+  function changeOrder() {
+    // TODO: spread - 불변성을 지키기 위해  clone하는 문법.
+    var newPostList = [...postList]; // 객체 clone
+    changePostList([newPostList[2],newPostList[0],newPostList[1]]);
+  }
+
+  function changeHit(postId) {
+    changePostList(postList.map(post => post.id == postId ? { ...post, hit: ++post.hit } : post));
+  }
+
+  function changeTitle(postId) {
+    changePostList(postList.map(post =>
+      post.id == postId ?
+        { ...post, title: '변경된 포스팅 제목', content: '변경된 포스팅입니다' }
+        : post)
+    );
+  }
+
+  function clickPost(postId) {
+    changePostList(postList.map(post => post.id == postId ? { ...post, isSeleted: true } : { ...post, isSeleted: false }));
+  }
+
+  const count = useMemo(
+    () => countActivePosts(postList) // deps 변수가 변경된 경우 함수 값 사용
+    , [postList] // 이 변수가 변경된 게 아니라면 재랜더링 X
+  );
+
+  return (
+    <>
+      {/* return 안에는 동등한 레벨의 태그를 병렬로 사용할 수 없어서 하나의 태그로 묶어주어야 함. 이때 사용할 수 있는 임시 태그. */}
+
+      <div className="App">
+
+        <div className="black-nav">
+          <div style = { { fontSize : '30px', width: '100%', textAlign: 'center'} }>
+            <span>개발 Blog</span>
+          </div>
+        </div>
+
+        <img src={ logo } style={ { width : '100px' } } />
+
+        <SearchBar />
+
+        <h2>목록({count})</h2>
+        <button onClick={ changeOrder } >sort</button>
+        <hr/>
+
+        {postList.map((post, index) => (
+
+          <Post
+            key={post.id}
+            post={post}
+            clickPost={clickPost}
+            onRemove={onRemove}
+            changeTitle={changeTitle}
+            changeHit={changeHit}
+          />
+
+        ))}
+
+        <hr/>
+
+        <h2>글쓰기</h2>
+        <hr/>
+        <CreatePost
+          title={title}
+          content={content}
+          onChange={onChange}
+          onCreate={onCreate}
+        />
+
+        /* 주석 */
+        {/* 주석 */}
+
+        <Hello
+          // 주석
+        />
+      </div>
+      <div>
+
+      </div>
+    </>
+  );
+}
 export default App;
