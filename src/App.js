@@ -2,23 +2,59 @@
 
 import logo from './logo.svg';
 import './App.css';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import Hello from "./Hello";
-import SearchBar from "./SearchBar";
+import React, {useCallback, useReducer, useRef} from 'react';
+import PostList from "./PostList";
 import CreatePost from "./CreatePost";
-import Post from "./Post";
 
-function countActivePosts(postList) {
-  console.log('게시글 수 카운트');
-  return postList.length;
-}
+const initialState = {
+  inputs: {
+    title: '',
+    content: ''
+  },
+  postList: [
+    { id: 1, title: '판교 맛집 추천', content: '판교 맛집 추천 포스팅입니다.', hit: 10, isEditable: false, isSelected: false }
+    , { id: 2, title: '판교 술집 추천', content: '판교 술집 추천 포스팅입니다.', hit: 5, isEditable: true, isSelected: false }
+    , { id: 3, title: '판교 야경 추천', content: '판교 야경 추천 포스팅입니다.', hit: 0, isEditable: false, isSelected: false }
+  ]
+};
 
 function reducer(state, action) {
   switch(action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
+    case 'CHANGE_INPUT':
+      return {
+        ...state,
+        inputs: {
+          ...state.inputs,
+          [action.name]: action.value
+        }
+      };
+    case 'CREATE_POST':
+      return {
+        ...state,
+        inputs: initialState.inputs,
+        postList: state.postList.concat(action.post)
+      };
+    case 'CLICK_POST':
+      console.log(state.postList);
+      return {
+        ...state,
+        postList: state.postList.map(post =>
+          (post.id === action.postId ?
+            {...post, isSelected: true } :
+            {...post, isSelected: false }
+          )
+        )
+      };
+    case 'REMOVE_POST':
+      return {
+        ...state,
+        postList: state.postList.filter(post => post.id !== action.postId)
+      };
+    case 'INCREASE_HIT':
+      return {
+        ...state,
+        postList: state.postList.map(post => post.id === action.postId ? {...post, hit: ++post.hit} : post )
+      }
     default:
       return state;
   }
@@ -26,85 +62,57 @@ function reducer(state, action) {
 
 function App() {
 
-  //////////////////
-  // 동적 변수 선언 //
-  //////////////////
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  // TODO: 변수 랜더링 Hook
-  const [inputs, setInputs] = useState({
-    title: '',
-    content: ''
-  });
+  const { postList } = state;
 
-  const { title, content } = inputs;
+  const { title, content } = state.inputs;
 
-  // TODO: 엘리먼트 참조 Hook
   const nextId = useRef(4);
-
-  // TODO: 비구조화 배열 할당
-  let [postList, changePostList] = useState([
-    { id: 1, title: '판교 맛집 추천', content: '판교 맛집 추천 포스팅입니다.', hit: 10, isEditable: false, isSeleted: false }
-    , { id: 2, title: '판교 술집 추천', content: '판교 술집 추천 포스팅입니다.', hit: 5, isEditable: true, isSeleted: false }
-    , { id: 3, title: '판교 야경 추천', content: '판교 야경 추천 포스팅입니다.', hit: 0, isEditable: false, isSeleted: false }
-  ]);
 
   const onChange = useCallback(e => {
     const { name, value } = e.target;
-    setInputs({
-      ...inputs,
-      [name]: value
-    })
+    dispatch({
+      type: 'CHANGE_INPUT',
+      name,
+      value
+    }); // TODO: key, value 입력없이 가능한지??
   }, []);
 
   const onCreate = useCallback(() => {
-
-    // changePostList(postList.concat({ // TODO: concat - 기존 배열 수정없이 원소 추가하는 문법
-    changePostList([...postList, {
-      id: nextId.current,
-      title: title,
-      content: content,
-      hit: 0,
-      isEditable: true,
-      isSeleted: false
-    }]);
-
-    setInputs({
-      title: '',
-      content: ''
+    dispatch({
+      type: 'CREATE_POST',
+      post: {
+        id: nextId.current++,
+        title,
+        content,
+        hit: 0,
+        isEditable: true,
+        isSelected: false
+      }
     });
-    nextId.current += 1;
-  },[]);
+  }, [title, content]);
 
-  const onRemove = useCallback(postId => {
-    changePostList(postList.filter(post => post.id !== postId));
+  const onClick = useCallback(postId => {
+    dispatch({
+      type: 'CLICK_POST',
+      postId
+    });
   }, []);
 
-  function changeOrder() {
-    // TODO: spread - 불변성을 지키기 위해  clone하는 문법.
-    var newPostList = [...postList]; // 객체 clone
-    changePostList([newPostList[2],newPostList[0],newPostList[1]]);
-  }
+  const onRemove = useCallback(postId => {
+    dispatch({
+      type: 'REMOVE_POST',
+      postId
+    });
+  }, []);
 
-  function changeHit(postId) {
-    changePostList(postList.map(post => post.id == postId ? { ...post, hit: ++post.hit } : post));
-  }
-
-  function changeTitle(postId) {
-    changePostList(postList.map(post =>
-      post.id == postId ?
-        { ...post, title: '변경된 포스팅 제목', content: '변경된 포스팅입니다' }
-        : post)
-    );
-  }
-
-  function clickPost(postId) {
-    changePostList(postList.map(post => post.id == postId ? { ...post, isSeleted: true } : { ...post, isSeleted: false }));
-  }
-
-  const count = useMemo(
-    () => countActivePosts(postList) // deps 변수가 변경된 경우 함수 값 사용
-    , [postList] // 이 변수가 변경된 게 아니라면 재랜더링 X
-  );
+  const increaseHit = useCallback(postId => {
+    dispatch({
+      type: 'INCREASE_HIT',
+      postId
+    })
+  });
 
   return (
     <>
@@ -120,26 +128,18 @@ function App() {
 
         <img src={ logo } style={ { width : '100px' } } />
 
-        <SearchBar />
+        {/*<SearchBar />*/}
 
-        <h2>목록({count})</h2>
-        <button onClick={ changeOrder } >sort</button>
-        <hr/>
+        <h2>목록({postList.length})</h2>
+        {/*<button onClick={ changeOrder } >sort</button>*/}
+        {/*<hr/>*/}
 
-        {postList.map((post, index) => (
-
-          <Post
-            key={post.id}
-            post={post}
-            clickPost={clickPost}
-            onRemove={onRemove}
-            changeTitle={changeTitle}
-            changeHit={changeHit}
-          />
-
-        ))}
-
-        <hr/>
+        <PostList
+          postList={postList}
+          onClick={onClick}
+          onRemove={onRemove}
+          increaseHit={increaseHit}
+        />
 
         <h2>글쓰기</h2>
         <hr/>
@@ -148,13 +148,6 @@ function App() {
           content={content}
           onChange={onChange}
           onCreate={onCreate}
-        />
-
-        /* 주석 */
-        {/* 주석 */}
-
-        <Hello
-          // 주석
         />
       </div>
       <div>
