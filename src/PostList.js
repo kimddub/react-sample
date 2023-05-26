@@ -26,6 +26,8 @@ function PostList({ postList }) {
   return (
 
     <>
+      {/* return 안에는 동등한 레벨의 태그를 병렬로 사용할 수 없어서 하나의 태그로 묶어주어야 함. 이때 사용할 수 있는 임시 태그. */}
+
       {postList.map((post, index) => (
         <div key={ "post-" + post.id } className="list">
           <h3 onClick={ (e) => { onClick(post.id) } } >
