@@ -3,6 +3,7 @@ import classNames from "classnames";
 import styles from "../styles/App.module.css";
 import React from "react";
 import logo from "../assets/logo.svg";
+import {Container} from "@material-ui/core";
 
 const Layout = () => {
 
@@ -19,8 +20,9 @@ const Layout = () => {
           <Link to="/"><img src={ logo } style={ { width : '100px' } } /></Link>
         </div>
       </div>
-
-      <Outlet />
+      <Container maxWidth="sm">
+        <Outlet />
+      </Container>
     </div>
   )
 };

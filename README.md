@@ -7,6 +7,7 @@ React 프로젝트 초기 구성을 잡기 위한 프로젝트
 - react: 18.2.0
 - Node.js: 18.15.0
 - create-react-app: 5.0.1
+- sass: 1.62.1
 
 ### Installation
 ```shell
@@ -16,8 +17,10 @@ npm install
 npx create-react-app react-setting
 yarn add immer
 yarn add @sentry/browser
-yarn add classnames react-icons styled-components
 yarn add react-router-dom
+yarn add classnames react-icons styled-components
+yarn add @material-ui/core
+yarn add sass
 ```
 
 ### Start
