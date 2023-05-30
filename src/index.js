@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as Sentry from '@sentry/browser';
+import {BrowserRouter} from "react-router-dom";
 
 Sentry.init({
   dsn: 'https://ff014c64521c4370a2c63abaf93ca92f@o4505249032962048.ingest.sentry.io/4505249037680640'
@@ -12,7 +13,9 @@ Sentry.init({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
 

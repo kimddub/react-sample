@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from "react";
 import {useRef, useState} from "react";
-import useInputs from "./hooks/useInputs";
+import useInputs from "../hooks/useInputs";
 
 function SearchBar() {
 

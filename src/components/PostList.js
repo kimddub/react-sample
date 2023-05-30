@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect} from "react";
-import {UserDispatch} from "./App";
+import {UserDispatch} from "../pages/Blog";
 
 function PostList({ postList }) {
 

@@ -16,6 +16,8 @@ npm install
 npx create-react-app react-setting
 yarn add immer
 yarn add @sentry/browser
+yarn add classnames react-icons styled-components
+yarn add react-router-dom
 ```
 
 ### Start
