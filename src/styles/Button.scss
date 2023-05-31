@@ -1,4 +1,4 @@
-$blue: #79d9e7; // 주석 선언
+$blue: var(--effect-color);; // 주석 선언
 
 .Button {
   display: inline-flex;

@@ -10,19 +10,29 @@ import Todo from "./pages/Todo";
 import Layout from "./pages/Layout";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import {createGlobalStyle} from "styled-components";
 
 function App() {
 
+  const GlobalStyle = createGlobalStyle`
+    body {
+      background: #e9ecef;
+    }
+  `;
+
   return (
-    <Routes>
-      <Route element={<Layout />} >
-        <Route index element={<Home />} />
-        <Route path="/todo" element={<Todo />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/login" element={<Login />} />
-      </Route>
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <>
+      <GlobalStyle />
+      <Routes>
+        <Route element={<Layout />} >
+          <Route index element={<Home />} />
+          <Route path="/todo" element={<Todo />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 }
 export default App;

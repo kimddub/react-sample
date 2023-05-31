@@ -4,6 +4,7 @@ import styles from "../styles/App.module.css";
 import React from "react";
 import logo from "../assets/logo.svg";
 import {Container} from "@material-ui/core";
+import {createGlobalStyle} from "styled-components";
 
 const Layout = () => {
 

@@ -14,7 +14,7 @@ const Home = () => {
 
   return (
     <div>
-      <Grid container spacing={10} >
+      <Grid container spacing={8} >
         <Grid item xs={6}>
           <Link to="/todo?isLoggedIn=N" >
             <Paper elevation={3}>
