@@ -3,6 +3,7 @@ import styled from "styled-components";
 import TodoHead from "../components/TodoHead";
 import TodoList from "../components/TodoList";
 import TodoCreate from "../components/TodoCreate";
+import {TodoProvider} from "../context/TodoContext";
 
 ////////////////
 // 스타일 적용 //
@@ -45,11 +46,13 @@ const Todo = () => {
   // }
 
   return (
-    <TodoTemplateBlock>
-      <TodoHead />
-      <TodoList />
-      <TodoCreate />
-    </TodoTemplateBlock>
+    <TodoProvider>
+      <TodoTemplateBlock>
+        <TodoHead />
+        <TodoList />
+        <TodoCreate />
+      </TodoTemplateBlock>
+    </TodoProvider>
   );
 };
 

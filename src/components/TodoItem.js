@@ -1,6 +1,8 @@
+import React from "react";
 import styled, { css } from "styled-components";
 import { MdDone, MdDelete } from "react-icons/md";
 import PropTypes from "prop-types";
+import {useTodoDispatch} from "../context/TodoContext";
 
 ////////////////
 // 스타일 적용 //
@@ -63,11 +65,16 @@ const Text = styled.div`
 
 
 const TodoItem = ({ id, done, text }) => {
+
+  const dispatch = useTodoDispatch();
+  const onToggle = () => dispatch({type : "TOGGLE", id });
+  const onRemove = () => dispatch({type : "REMOVE", id });
+
   return (
     <TodoItemBlock>
-      <CheckCircle done={done}>{done && <MdDone />}</CheckCircle>
+      <CheckCircle done={done} onClick={onToggle}>{done && <MdDone />}</CheckCircle>
       <Text done={done}>{text}</Text>
-      <Remove>
+      <Remove onClick={onRemove}>
         <MdDelete />
       </Remove>
     </TodoItemBlock>
@@ -83,4 +90,6 @@ TodoItem.defaultProps = {
   done: false,
   text: "입력..."
 }
-export default TodoItem;
+
+// 불필요한 랜더링 방지
+export default React.memo(TodoItem);

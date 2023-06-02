@@ -1,6 +1,8 @@
+import React from "react";
 import styled, { css } from "styled-components";
 import {useState} from "react";
 import {MdAdd} from "react-icons/md";
+import {useTodoDispatch, useTodoNextId, useTodoState} from "../context/TodoContext";
 
 ////////////////
 // 스타일 적용 //
@@ -82,15 +84,35 @@ const Input = styled.input`
 const TodoCreate = () => {
 
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  const dispatch = useTodoDispatch();
+  const nextId = useTodoNextId();
 
   const onToggle = () => setOpen(!open);
+  const onChange = e => {
+    setValue(e.target.value);
+  };
+  const onSubmit = e => {
+    e.preventDefault(); // 새로고침 방지
+    dispatch({
+      type: 'CREATE',
+      todo: {
+        id: nextId.current++,
+        text: value,
+        done: false
+      }
+    });
+    setValue('');
+    setOpen(false);
+  }
 
   return (
     <>
       {open && (
         <InsertFormPositioner>
-          <InsertForm>
-            <Input autoFocus placeholder="할일 입력 후 Enter를 누르세요" />
+          <InsertForm onSubmit={onSubmit}>
+            <Input autoFocus placeholder="할일 입력 후 Enter를 누르세요" onChange={onChange} value={value}/>
           </InsertForm>
         </InsertFormPositioner>
       )}
@@ -101,4 +123,4 @@ const TodoCreate = () => {
   );
 };
 
-export default TodoCreate;
+export default React.memo(TodoCreate);
