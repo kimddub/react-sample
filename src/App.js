@@ -11,6 +11,8 @@ import Layout from "./pages/Layout";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import {createGlobalStyle} from "styled-components";
+import {AppProvider} from "./context/AppContext";
+import {UsersProvider} from "./context/UsersContext";
 
 function App() {
 
@@ -22,16 +24,20 @@ function App() {
 
   return (
     <>
-      <GlobalStyle />
-      <Routes>
-        <Route element={<Layout />} >
-          <Route index element={<Home />} />
-          <Route path="/todo" element={<Todo />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/login" element={<Login />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AppProvider>
+        <UsersProvider>
+          <GlobalStyle />
+          <Routes>
+            <Route element={<Layout />} >
+              <Route index element={<Home />} />
+              <Route path="/todo" element={<Todo />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/login" element={<Login />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </UsersProvider>
+      </AppProvider>
     </>
   );
 }

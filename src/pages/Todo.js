@@ -1,9 +1,10 @@
-import {Navigate, useSearchParams} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 import styled from "styled-components";
 import TodoHead from "../components/TodoHead";
 import TodoList from "../components/TodoList";
 import TodoCreate from "../components/TodoCreate";
 import {TodoProvider} from "../context/TodoContext";
+import {useAppDispatch, useAppPath, useAppState} from "../context/AppContext";
 
 ////////////////
 // 스타일 적용 //
@@ -39,11 +40,18 @@ const Todo = () => {
 
   // const [searchParas, setSearchParams] = useSearchParams();
   // const isLoggedIn = searchParas.get('isLoggedIn');
-  //
-  // if (isLoggedIn === 'N') {
-  //   // replace = true 일 경우, 뒤로가기 시 2페이지 전으로 이동
-  //   return <Navigate to="/login" replace={true} />;
-  // }
+
+  const loginUser = useAppState().user;
+  const redirectPath = useAppPath();
+  const currentPath = useLocation();
+
+  if (Object.keys(loginUser) < 1) {
+
+    redirectPath.current = currentPath?.pathname; // window.location.href;
+
+    // replace = true 일 경우, 뒤로가기 시 2페이지 전으로 이동
+    return <Navigate to="/login" replace={true} />;
+  }
 
   return (
     <TodoProvider>

@@ -21,6 +21,8 @@ yarn add react-router-dom
 yarn add classnames react-icons styled-components
 yarn add @material-ui/core
 yarn add sass
+yarn add axios
+yarn add react-async
 ```
 
 ### Start

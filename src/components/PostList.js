@@ -1,9 +1,12 @@
-import React, {useCallback, useContext, useEffect} from "react";
-import {UserDispatch} from "../pages/Blog";
+import React, {useCallback, useEffect} from "react";
+import {useBlogDispatch, useBlogState} from "../context/BlogContext";
 
-function PostList({ postList }) {
+function PostList() {
 
-  const dispatch = useContext(UserDispatch);
+  const state = useBlogState();
+  const dispatch = useBlogDispatch();
+
+  const postList = state?.postList;
 
   // TODO: Hook
   useEffect(() => { // func
@@ -27,6 +30,8 @@ function PostList({ postList }) {
 
     <>
       {/* return 안에는 동등한 레벨의 태그를 병렬로 사용할 수 없어서 하나의 태그로 묶어주어야 함. 이때 사용할 수 있는 임시 태그. */}
+
+      <h2>목록({postList.length})</h2>
 
       {postList.map((post, index) => (
         <div key={ "post-" + post.id } className="list">
@@ -53,7 +58,7 @@ function PostList({ postList }) {
  */
 const Post = React.memo(function({post}) {
 
-  const dispatch = useContext(UserDispatch);
+  const dispatch = useBlogDispatch();
 
   // TODO: 비구조화 객체 할당
   var { id, title, content, isSelected, isEditable, hit } = post;

@@ -1,11 +1,15 @@
-import React, {useCallback, useContext, useRef} from "react";
-import {UserDispatch} from "../pages/Blog";
+import React, {useCallback, useRef} from "react";
+import {useBlogDispatch, useBlogState} from "../context/BlogContext";
 
-function CreatePost({ title, content }) {
+function CreatePost() {
 
-  const dispatch = useContext(UserDispatch);
+  const state = useBlogState();
+
+  const dispatch = useBlogDispatch();
 
   const nextId = useRef(4);
+
+  const { title, content } = state?.inputs;
 
   const onChange = useCallback(e => {
     const { name, value } = e.target;

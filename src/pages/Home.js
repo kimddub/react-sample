@@ -7,29 +7,22 @@ import styled from "styled-components";
 const Home = () => {
 
   const CardItem = styled(Button)`
-    && {
-      height: 300px;
-    }
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.06);
+    margin: 10% 2%;
+    width: 30%;
   `;
 
   return (
     <div>
-      <Grid container spacing={8} >
-        <Grid item xs={6}>
-          <Link to="/todo?isLoggedIn=N" >
-            <Paper elevation={3}>
-              <CardItem>할일</CardItem>
-            </Paper>
-          </Link>
-        </Grid>
-        <Grid item xs={6}>
-          <Link to="/blog">
-            <Paper elevation={3}>
-              <CardItem>블로그</CardItem>
-            </Paper>
-          </Link>
-        </Grid>
-      </Grid>
+      <Link to="/todo" >
+       <CardItem>할일</CardItem>
+      </Link>
+      <Link to="/blog">
+        <CardItem>블로그</CardItem>
+      </Link>
     </div>
   );
 };

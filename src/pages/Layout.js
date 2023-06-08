@@ -1,16 +1,34 @@
-import {Link, Outlet, useNavigate} from 'react-router-dom';
+import {Link, Navigate, Outlet, useNavigate} from 'react-router-dom';
 import classNames from "classnames";
 import styles from "../styles/App.module.css";
 import React from "react";
 import logo from "../assets/logo.svg";
 import {Container} from "@material-ui/core";
-import {createGlobalStyle} from "styled-components";
+import styled, {createGlobalStyle, css} from "styled-components";
+import {useAppDispatch, useAppState} from "../context/AppContext";
+import {MdLogout} from "react-icons/md";
+
+
+const LogoutTemplateBlock = styled.div`
+  color: white;
+  float: right;
+  &:hover {
+    color: var(--effect-color);
+  }
+`;
 
 const Layout = () => {
 
-  const navigate = useNavigate();
-  // navigate(-1);
-  // navigate('/Blog');
+  const loginUser = useAppState().user;
+  const dispatch = useAppDispatch();
+
+  const logout = () => {
+    dispatch({
+      type: 'LOGOUT'
+    });
+
+    return <Navigate to="/" replace={true} />;
+  };
 
   return (
     <div className={classNames(styles.App)}>
@@ -19,6 +37,12 @@ const Layout = () => {
       <div className={styles['black-nav']}>
         <div style = { { fontSize : '30px', width: '100%', textAlign: 'center'} }>
           <Link to="/"><img src={ logo } style={ { width : '100px' } } /></Link>
+          { loginUser.hasOwnProperty('name') &&
+            <>
+              <span>Hi, {loginUser.name}</span>
+              <LogoutTemplateBlock onClick={logout}><MdLogout></MdLogout></LogoutTemplateBlock>
+            </>
+          }
         </div>
       </div>
       <Container maxWidth="sm">
